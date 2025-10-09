@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Q&A Bot</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #chat-container { width: 500px; background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 20px; }
+        h1 { text-align: center; color: #333; }
+        #input-area { display: flex; margin-top: 20px; }
+        #question-input { flex-grow: 1; border: 1px solid #ccc; border-radius: 4px; padding: 10px; font-size: 16px; }
+        #ask-button { background-color: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 4px; margin-left: 10px; cursor: pointer; }
+        #answer-box { margin-top: 20px; padding: 15px; background-color: #e9ecef; border-radius: 4px; min-height: 50px; white-space: pre-wrap; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container">
+        <h1>🤖 AI Voice Q&A</h1>
+        <div id="input-area">
+            <input type="text" id="question-input" placeholder="Ask about AI, CNN, RNN...">
+            <button id="ask-button">Ask</button>
+        </div>
+        <div id="answer-box">
+            Your answer will appear here...
+        </div>
+    </div>
+
+    <script>
+        const askButton = document.getElementById('ask-button');
+        const questionInput = document.getElementById('question-input');
+        const answerBox = document.getElementById('answer-box');
+
+        // Function to make the browser speak 🔊
+        function speak(text) {
+            window.speechSynthesis.cancel(); // Stop any previous speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(utterance);
+        }
+
+        async function getAnswer() {
+            const question = questionInput.value;
+            if (!question) return;
+
+            answerBox.textContent = "Thinking...";
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: question })
+                });
+
+                const data = await response.json();
+                const answerText = data.answer;
+
+                // Display the answer in the text box
+                answerBox.textContent = answerText;
+
+                // Speak the answer out loud
+                speak(answerText);
+
+            } catch (error) {
+                const errorMsg = "Error: Could not connect to the backend server.";
+                answerBox.textContent = errorMsg;
+                console.error("Fetch error:", error);
+            }
+        }
+
+        askButton.addEventListener('click', getAnswer);
+        questionInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                getAnswer();
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPTEL Course Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #course-select {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        #open-playlist-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #open-playlist-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Select a course:</h1>
+        <select id="course-select">
+            <option value="">-- Please choose a course --</option>
+        </select>
+        <br><br>
+        <button id="open-playlist-btn">Open Playlist</button>
+    </div>
+
+    <script>
+        const courses = {
+            "Programming, Data Structures and Algorithms Using Python": "https://youtube.com/playlist?list=PLyqSpQzTE6M_Fu6l8irVwXkUyC9Gwqr6_&si=BA7Kw1eh2MOfHT_n",
+            "Introduction to Machine Learning": "https://youtube.com/playlist?list=PL1xHD4vteKYVpaIiy295pg6_SY5qznc77&si=Ee7usR0j2a7wcDtJ",
+            "Database Management System": "https://youtube.com/playlist?list=PLIwC9bZ0rmjSkm1VRJROX4vP2YMIf4Ebh&si=tfwv2KgH5hhz7NsW",
+            "Operating System Fundamentals": "https://youtube.com/playlist?list=PL-8LShlBMIjWDrcc3I86VyGgMJyvcX7Ud&si=GIkEwpDsyiEBHkFg",
+            "Data Science for Engineers": "https://www.youtube.com/live/P26Ih1OBzyg?si=tP2eEHXINRh6UmL_",
+            "Introduction to Artificial Intelligence": "https://youtube.com/playlist?list=PLp6ek2hDcoNB_YJCruBFjhF79f5ZHyBuz&si=OmiToolZKDqk8rn2",
+            "Computer Networks": "https://youtube.com/playlist?list=PLbRMhDVUMngf-peFloB7kyiA40EptH1up&si=ZP77xCfN1eTSDfMd",
+            "Software Engineering": "https://youtube.com/playlist?list=PLbRMhDVUMngf8oZR3DpKMvYhZKga90JVt&si=Cvh81SlZGzKC_SCX",
+            "Cloud Computing": "https://youtube.com/playlist?list=PLShJJCRzJWxhz7SfG4hpaBD5bKOloWx9J&si=FBcrSiaUwOIzc96b",
+            "Introduction to Internet of Things": "https://youtube.com/playlist?list=PLJ5C_6qdAvBG7SHg5mLOQq6bzF-sOPu3k&si=fg0vVaqF-BNwG4Ok",
+            "Machine Learning for Engineering and Science Applications": "https://youtube.com/playlist?list=PLyqSpQzTE6M-SISTunGRBRiZk7opYBf_K&si=VJNu57a_uf7EWI1P",
+            "Discrete Mathematics": "https://youtube.com/playlist?list=PLyqSpQzTE6M-hUn1ILCzWE2gc592_DgK4&si=HpeIkJb1V35sjnSv",
+            "Deep Learning": "https://youtube.com/playlist?list=PLyqSpQzTE6M9gCgajvQbc68Hk_JKGBAYT&si=Cqd5z4lyHMAGD0Ky",
+            "Introduction to Data Analytics": "https://youtube.com/playlist?list=PLRueFtKLr0QN7MmQ8pdpQerOe_s8vGJG4&si=0XFNO4Dcg6oXo7zb",
+            "Compiler Design": "https://youtube.com/playlist?list=PLbRMhDVUMngcseCW7wXDvtTDemCuH80fP&si=W2DZlzf-z0GES2nF",
+            "Advanced Computer Architecture": "https://youtube.com/playlist?list=PLwdnzlV3ogoWJhBxBYu-K4l-q-nNHd24D&si=drsex4OP9Vyx5JBY",
+            "Introduction to Quantum Mechanics": "https://youtube.com/playlist?list=PL1955A15B7F282A7F&si=wWjuYG36JLNj7Vvi",
+            "Digital Signal Processing": "https://youtube.com/playlist?list=PL9567DFCA3A66F299&si=urdsPBZEqtEZBPP2",
+            "Computer Organization and Architecture": "https://youtube.com/playlist?list=PL-8LShlBMIjUuI9beQJHZUF14we25NToB&si=-50gQ87_a5uRnDzG",
+            "Advanced Data Structures": "https://youtube.com/playlist?list=PLBF3763AF2E1C572F&si=P7OoLZVRekyfkFy5",
+            "Artificial Neural Networks": "https://youtube.com/playlist?list=PL53BE265CE4A6C056&si=tQXRgYf6xnVPs67Y",
+            "Natural Language Processing": "https://youtube.com/playlist?list=PLzJaFd3A7DZutMK8fFxZx_mhmFQgzijGE&si=996eQp6lVl4Vs3LR",
+            "Computer Graphics": "https://youtube.com/playlist?list=PLwdnzlV3ogoWaYiowRtJ8t8FeR-ODfSV1&si=acjGYB3tVB8EHkuH",
+            "Computer Vision": "https://youtube.com/playlist?list=PLwdnzlV3ogoVsma5GmBSsgJM6gHv1QoAo&si=XkGGN18BuvSltPx3",
+            "Cloud Computing and Big Data": "https://youtube.com/playlist?list=PLShJJCRzJWxhz7SfG4hpaBD5bKOloWx9J&si=yUkUPwPhPN7oj1Az",
+            "Blockchain Technology": "https://youtube.com/playlist?list=PLFW6lRTa1g80R3Q_5-jsNVhDFAeGaABo9&si=75NeVCXF3gTe8vK-",
+            "Cyber Security": "https://youtube.com/playlist?list=PLyqSpQzTE6M-jkJEzbS5oHJUp2GWPsq6e&si=QM_TksKp4Y6H_HAD",
+            "Internet of Things": "https://youtube.com/playlist?list=PLE7VH8RC_N3bpVn-e8QzOAHziEgmjQ2qE&si=JY6CWqaPQ2KvRHel",
+            "Data Science": "https://youtu.be/MTjOuCbdBCo?si=kxtf8_c63Mr8bMWd",
+            "Machine Learning": "https://youtube.com/playlist?list=PLJ5C_6qdAvBGaabKHmVbtryZW9KpICiHC&si=U0pdAQ1Iw8RFOnhW",
+        };
+
+        const courseSelect = document.getElementById('course-select');
+        const openPlaylistBtn = document.getElementById('open-playlist-btn');
+
+        for (const courseName in courses) {
+            const option = document.createElement('option');
+            option.value = courses[courseName];
+            option.textContent = courseName;
+            courseSelect.appendChild(option);
+        }
+
+        function openCourse() {
+            const selectedUrl = courseSelect.value;
+            if (selectedUrl) {
+                window.open(selectedUrl, '_blank');
+            } else {
+                alert('Please select a course first!');
+            }
+        }
+
+        openPlaylistBtn.addEventListener('click', openCourse);
+
+    </script>
+
+</body>
+</html>

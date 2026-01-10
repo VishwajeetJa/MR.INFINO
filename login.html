@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MR.INFINO - The New Standard in AI Learning</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary-bg: #111111;
+            --secondary-bg: #191919;
+            --border-color: #333333;
+            --primary-text: #ffffff;
+            --secondary-text: #a0a0a0;
+            --highlight-color: #e55c5c;
+            --highlight-hover: #f06b6b;
+            --highlight-glow: rgba(229, 92, 92, 0.2);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/wavecut.png');
+            opacity: 0.05;
+            z-index: 0;
+        }
+
+        button {
+            padding: 10px 24px; border: none; border-radius: 8px;
+            background: var(--highlight-color);
+            color: #fff; cursor: pointer; font-size: 16px; font-weight: 600;
+            transition: all 0.2s;
+        }
+        button:hover { background-color: var(--highlight-hover); }
+
+        
+        .modal-content {
+            background: var(--secondary-bg); border: 1px solid var(--border-color);
+            border-radius: 1rem; padding: 2.5rem; width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            z-index: 1;
+            animation: fadeInModal 0.5s ease;
+        }
+        @keyframes fadeInModal { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .modal-tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
+        .modal-tab { flex: 1; text-align: center; padding: 0.75rem; cursor: pointer; font-weight: 500; color: var(--secondary-text); }
+        .modal-tab.active { color: var(--highlight-color); border-bottom: 2px solid var(--highlight-color); }
+        
+        .modal-form { display: none; }
+        .modal-form.active { display: block; }
+        .modal-form input { width: 100%; box-sizing: border-box; padding: 14px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--primary-bg); color: var(--primary-text); font-size: 16px; margin-bottom: 1rem; }
+        .modal-form button { width: 100%; justify-content: center; }
+        
+        .form-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-content">
+        <h2 class="form-title"><i data-lucide="sparkles"></i> MR.INFINO</h2>
+        <div class="modal-tabs">
+            <div class="modal-tab active" data-form="login-form">Login</div>
+            <div class="modal-tab" data-form="signup-form">Sign Up</div>
+        </div>
+
+        <form id="login-form" class="modal-form active">
+            <input type="email" placeholder="Email Address" required>
+            <input type="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <form id="signup-form" class="modal-form">
+            <input type="text" placeholder="Full Name" required>
+            <input type="email" placeholder="Email Address" required>
+            <input type="password" placeholder="Create Password" required>
+            <button type="submit">Create Account</button>
+        </form>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+
+        const modalTabs = document.querySelectorAll('.modal-tab');
+        const modalForms = document.querySelectorAll('.modal-form');
+
+        modalTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetForm = tab.getAttribute('data-form');
+                modalTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                modalForms.forEach(form => form.classList.toggle('active', form.id === targetForm));
+            });
+        });
+
+        modalForms.forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                console.log(`Simulating successful authentication for ${form.id}`);
+                // On success, redirect to the main dashboard.
+                window.location.href = './dashboard.html';
+            });
+        });
+    });
+</script>
+</body>
+</html>
+

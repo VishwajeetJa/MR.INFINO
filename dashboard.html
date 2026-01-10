@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MR.INFINO - AI Learning Hub</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary-bg: #111111;
+            --secondary-bg: #191919;
+            --border-color: #333333;
+            --primary-text: #ffffff;
+            --secondary-text: #a0a0a0;
+            --highlight-color: #e55c5c; 
+            --highlight-hover: #f06b6b;
+            --highlight-glow: rgba(229, 92, 92, 0.2);
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/wavecut.png');
+            opacity: 0.05;
+            z-index: 0;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2.5rem;
+            background-color: var(--primary-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover { color: var(--primary-text); }
+        .nav-link.active { color: var(--primary-text); border-bottom-color: var(--highlight-color); }
+        
+        main { flex-grow: 1; overflow-y: auto; padding: 2.5rem; position: relative; z-index: 1; }
+        .content-section { display: none; max-width: 900px; margin: 0 auto; animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .content-section.active { display: block; }
+
+        h1 { text-align: center; color: var(--primary-text); font-size: 2.25rem; margin-bottom: 0.5rem; }
+        .subtitle { text-align: center; color: var(--secondary-text); margin-top: 0; margin-bottom: 1.5rem; font-size: 1.1rem; }
+
+        input, select, textarea {
+            width: 100%; box-sizing: border-box; padding: 14px; border-radius: 8px;
+            border: 1px solid var(--border-color); background-color: var(--secondary-bg);
+            color: var(--primary-text); font-size: 16px; margin-bottom: 1rem; transition: all 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--highlight-color); box-shadow: 0 0 0 4px var(--highlight-glow); }
+
+        button {
+            padding: 12px 28px; border: none; border-radius: 8px;
+            background: var(--highlight-color);
+            color: #fff; cursor: pointer; font-size: 16px; font-weight: 600;
+            transition: all 0.2s;
+        }
+        button:hover { background-color: var(--highlight-hover); }
+        
+        .button-secondary {
+            padding: 8px 20px;
+            font-size: 14px;
+            background-color: transparent;
+            color: var(--primary-text);
+            border: 1px solid var(--border-color);
+            margin: 5px;
+        }
+        .button-secondary:hover { background-color: var(--border-color); }
+
+        .video-container { width: 400px; height: 400px; margin: 1rem auto; position: relative; background-color: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 0 30px rgba(0,0,0,0.8);}
+        .video-container video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
+        .video-container video.active { display: block; }
+        .response-box { margin-top: 1.5rem; padding: 1.5rem; background-color: #000; border-radius: 12px; min-height: 100px; text-align: left; white-space: pre-wrap; line-height: 1.7; font-size: 1rem; border: 1px solid var(--border-color); }
+        .controls { margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem; }
+        
+        .book-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .book-card { background: var(--secondary-bg); padding: 1rem; border: 1px solid var(--border-color); border-radius: 12px; text-align: center; transition: transform 0.2s ease; }
+        .book-card img { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; }
+        
+        #course-list-container { max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 1rem; }
+        .course-item { display: block; padding: 1rem; color: var(--secondary-text); text-decoration: none; border-bottom: 1px solid var(--border-color); }
+        .course-item:hover { background-color: var(--secondary-bg); color: var(--primary-text); }
+        
+        /* NEW STYLES FOR INTERACTIVE QUIZ FEEDBACK */
+        .quiz-option-btn {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .quiz-option-btn.correct {
+            background-color: var(--success-color) !important;
+            border-color: var(--success-color);
+        }
+        .quiz-option-btn.wrong {
+            background-color: var(--error-color) !important;
+            border-color: var(--error-color);
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="logo">
+            <i data-lucide="sparkles"></i>
+            <span>MR.INFINO</span>
+        </div>
+     
+        <div class="nav-links">
+            <a href="#" class="nav-link active" data-target="ai-assistant-section"><i data-lucide="brain-circuit"></i>AI Assistant</a>
+            <a href="#" class="nav-link" data-target="lecture-bot-section"><i data-lucide="graduation-cap"></i>Lecture Bot</a>
+            <a href="#" class="nav-link" data-target="numerical-bot-section"><i data-lucide="calculator"></i>Numerical Solver</a>
+            <a href="#" class="nav-link" data-target="explainer-section"><i data-lucide="code-2"></i>Code Explainer</a>
+            <a href="#" class="nav-link" data-target="quiz-section"><i data-lucide="clipboard-check"></i>AI Quiz</a>
+            <a href="#" class="nav-link" data-target="courses-section"><i data-lucide="library"></i>Courses</a>
+            <a href="#" class="nav-link" data-target="library-section"><i data-lucide="book-open"></i>Library</a>
+            <a href="#" class="nav-link" data-target="meet-section"><i data-lucide="video"></i>Meet</a>
+        </div>
+        <div class="nav-actions">
+            <button id="logout-btn" class="button-secondary">Log Out</button>
+        </div>
+    </nav>
+
+    <main>
+        <section id="ai-assistant-section" class="content-section active">
+            <h1>The New Standard in AI-Based Learning</h1>
+            <p class="subtitle">Interact with our AI tutor for instant academic support.</p>
+            <div class="video-container">
+                <video id="video-neutral" class="active" src="BaseSimulation/BaseSimulation.mp4" playsinline loop></video>
+                <video id="video-positive" src="BaseSimulation/positive_expression.mp4" playsinline loop></video>
+                <video id="video-negative" src="BaseSimulation/negative_expression.mp4" playsinline loop></video>
+            </div>
+            <div id="answer-box" class="response-box">Ask a question to begin...</div>
+            <input type="text" id="question-input" placeholder="Ask a short question...">
+            <div class="controls">
+                <button id="ask-button">Ask AI</button>
+                <button id="stop-button" class="button-secondary">Stop</button>
+            </div>
+        </section>
+
+        <section id="lecture-bot-section" class="content-section">
+            <h1>Lecture Generator</h1>
+            <p class="subtitle">Convert your notes or PDFs into engaging AI video lectures.</p>
+            <textarea id="lecture-input" rows="10" placeholder="Paste raw content or lecture notes here..."></textarea>
+            <div class="controls">
+                <button id="generate-lecture-button">Generate & Play Lecture</button>
+            </div>
+        </section>
+
+        <section id="numerical-bot-section" class="content-section">
+            <h1>Numerical Problem Solver</h1>
+             <p class="subtitle">Step-by-step solutions for complex math and physics problems.</p>
+            <textarea id="numerical-input" rows="8" placeholder="Enter your numerical problem here..."></textarea>
+            <button id="solve-numerical-button">Solve Problem</button>
+            <div id="numerical-solution-box" class="response-box" style="margin-top: 1rem;">Solution will appear here...</div>
+        </section>
+
+        <section id="explainer-section" class="content-section">
+            <h1>UniTutor - Code Explainer</h1>
+            <p class="subtitle">Line-by-line logic breakdown for multiple programming languages.</p>
+            <select id="explainer-lang">
+                <option value="Python">Python</option>
+                <option value="C">C</option>
+                <option value="C++">C++</option>
+                <option value="Java">Java</option>
+                <option value="JavaScript">JavaScript</option>
+            </select>
+            <textarea id="explainer-input" rows="10" placeholder="Paste your code snippet here..."></textarea>
+            <button id="explain-code-btn">Explain Code</button>
+            <div id="explainer-output" class="response-box" style="margin-top: 1.5rem;">The logic breakdown will appear here...</div>
+        </section>
+
+        <section id="quiz-section" class="content-section">
+            <h1>AI Quiz Generator</h1>
+            <p class="subtitle">Generate custom practice quizzes on any topic.</p>
+            <input type="text" id="quiz-topic-input" placeholder="Enter topic (e.g., Quantum Physics, Python Basics)">
+            <input type="number" id="quiz-num" value="5" min="1" max="10" style="width: 100px;">
+            <button id="start-quiz-btn">Generate Quiz</button>
+            <div id="quiz-area" class="response-box" style="margin-top: 1.5rem;">Your quiz questions will appear here...</div>
+        </section>
+
+        <section id="courses-section" class="content-section">
+            <h1>Course Dashboard</h1>
+            <p class="subtitle">Official NPTEL course video playlists.</p>
+            <input type="text" id="course-search-input" placeholder="Search for a course...">
+            <div id="course-list-container"></div>
+        </section>
+
+        <section id="library-section" class="content-section">
+            <h1>Book Library</h1>
+            <p class="subtitle">Search millions of titles via Google Books.</p>
+            <input type="text" id="searchInput" placeholder="Search by title or author...">
+            <button id="search-books-btn">Search Books</button>
+            <div class="book-list" id="bookList"></div>
+        </section>
+
+        <section id="meet-section" class="content-section">
+            <h1>Live Meet</h1>
+            <p class="subtitle">Start a new Google Meet session instantly.</p>
+            <div class="controls">
+                <button onclick="window.open('https://meet.google.com/new', '_blank')">Create / Join Meet</button>
+            </div>
+        </section>
+    </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        
+        const synth = window.speechSynthesis;
+        const videos = {
+            neutral: document.getElementById('video-neutral'),
+            positive: document.getElementById('video-positive'),
+            negative: document.getElementById('video-negative')
+        };
+
+        // Navigation Logic
+        const navLinks = document.querySelectorAll('.nav-link');
+        const contentSections = document.querySelectorAll('.content-section');
+        navLinks.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const targetId = link.getAttribute('data-target');
+                navLinks.forEach(l => l.classList.remove('active'));
+                contentSections.forEach(s => s.classList.remove('active'));
+                link.classList.add('active');
+                document.getElementById(targetId).classList.add('active');
+                if (synth.speaking) synth.cancel();
+            });
+        });
+
+        function setActiveVideo(emotion, shouldPlay = true) {
+            const targetVideo = videos[emotion] || videos.neutral;
+            Object.values(videos).forEach(v => {
+                v.classList.remove('active');
+                v.pause();
+            });
+            targetVideo.classList.add('active');
+            if (shouldPlay) targetVideo.play();
+        }
+
+        // AI Assistant Speech Logic
+        async function speakAndAnimate(analysis) {
+            if (synth.speaking) synth.cancel();
+            let sentenceIndex = 0;
+            function speakNext() {
+                if (sentenceIndex >= analysis.length) {
+                    setActiveVideo('neutral', false);
+                    return;
+                }
+                const s = analysis[sentenceIndex];
+                setActiveVideo(s.emotion, true);
+                const utter = new SpeechSynthesisUtterance(s.text);
+                utter.onend = () => { sentenceIndex++; speakNext(); };
+                synth.speak(utter);
+            }
+            speakNext();
+        }
+
+        // Ask AI Assistant
+        document.getElementById('ask-button').addEventListener('click', async () => {
+            const question = document.getElementById('question-input').value;
+            const box = document.getElementById('answer-box');
+            if(!question) return;
+            box.textContent = "🤖 Thinking...";
+            setActiveVideo('neutral', true);
+            const res = await fetch('http://127.0.0.1:5000/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question })
+            });
+            const data = await res.json();
+            box.textContent = data.full_answer;
+            speakAndAnimate(data.analysis);
+        });
+
+        // Numerical Solver
+        document.getElementById('solve-numerical-button').addEventListener('click', async () => {
+            const problem = document.getElementById('numerical-input').value;
+            const box = document.getElementById('numerical-solution-box');
+            if(!problem) return;
+            box.textContent = "🧠 Solving...";
+            const res = await fetch('http://127.0.0.1:5000/solve-numerical', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ problem })
+            });
+            const data = await res.json();
+            box.textContent = data.solution;
+        });
+
+        // Code Explainer
+        document.getElementById('explain-code-btn').addEventListener('click', async () => {
+            const code = document.getElementById('explainer-input').value;
+            const lang = document.getElementById('explainer-lang').value;
+            const output = document.getElementById('explainer-output');
+            if(!code) return;
+            output.textContent = "🔍 Analyzing code structure...";
+            const res = await fetch('http://127.0.0.1:5000/explain-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code, language: lang })
+            });
+            const data = await res.json();
+            output.textContent = data.explanation;
+        });
+
+        // UPDATED INTERACTIVE QUIZ LOGIC
+        document.getElementById('start-quiz-btn').addEventListener('click', async () => {
+            const topic = document.getElementById('quiz-topic-input').value;
+            const num = document.getElementById('quiz-num').value;
+            const area = document.getElementById('quiz-area');
+            if(!topic) return;
+            area.innerHTML = "📝 Creating quiz questions...";
+            const res = await fetch('http://127.0.0.1:5000/generate-quiz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic, num })
+            });
+            const data = await res.json();
+            if(data.error) { area.textContent = data.error; return; }
+            area.innerHTML = "";
+            data.quiz.forEach((q, i) => {
+                const div = document.createElement('div');
+                div.style.marginBottom = "25px";
+                div.style.paddingBottom = "15px";
+                div.style.borderBottom = "1px solid var(--border-color)";
+                div.innerHTML = `<p><strong>Q${i+1}: ${q.question}</strong></p>`;
+                
+                const optionsContainer = document.createElement('div');
+                optionsContainer.style.display = "grid";
+                optionsContainer.style.gridTemplateColumns = "1fr 1fr";
+                optionsContainer.style.gap = "10px";
+
+                q.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "button-secondary quiz-option-btn";
+                    btn.textContent = opt;
+                    
+                    btn.onclick = () => {
+                        // Feedback and lock logic
+                        const siblingButtons = optionsContainer.querySelectorAll('button');
+                        siblingButtons.forEach(b => b.disabled = true);
+                        
+                        if(opt === q.answer) {
+                            btn.classList.add('correct');
+                        } else {
+                            btn.classList.add('wrong');
+                            // Highlight the correct one
+                            siblingButtons.forEach(b => {
+                                if(b.textContent === q.answer) b.classList.add('correct');
+                            });
+                        }
+                    };
+                    optionsContainer.appendChild(btn);
+                });
+                div.appendChild(optionsContainer);
+                area.appendChild(div);
+            });
+        });
+
+        // Library Search
+        document.getElementById('search-books-btn').addEventListener('click', async () => {
+            const q = document.getElementById('searchInput').value;
+            const list = document.getElementById('bookList');
+            if(!q) return;
+            list.innerHTML = "Loading...";
+            const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}`);
+            const data = await res.json();
+            list.innerHTML = "";
+            data.items.forEach(b => {
+                const info = b.volumeInfo;
+                const card = document.createElement('div');
+                card.className = "book-card";
+                card.innerHTML = `<img src="${info.imageLinks?.thumbnail || ''}"><div class="book-title">${info.title}</div><a href="${info.previewLink}" target="_blank" class="nav-link" style="font-size:12px">Preview</a>`;
+                list.appendChild(card);
+            });
+        });
+
+        // Courses Logic
+        const courses = {
+            "Programming, Data Structures and Algorithms Using Python": "https://youtube.com/playlist?list=PLyqSpQzTE6M_Fu6l8irVwXkUyC9Gwqr6_&si=BA7Kw1eh2MOfHT_n",
+            "Introduction to Machine Learning": "https://youtube.com/playlist?list=PL1xHD4vteKYVpaIiy295pg6_SY5qznc77&si=Ee7usR0j2a7wcDtJ",
+            "Database Management System": "https://youtube.com/playlist?list=PLIwC9bZ0rmjSkm1VRJROX4vP2YMIf4Ebh&si=tfwv2KgH5hhz7NsW",
+            "Operating System Fundamentals": "https://youtube.com/playlist?list=PL-8LShlBMIjWDrcc3I86VyGgMJyvcX7Ud&si=GIkEwpDsyiEBHkFg",
+            "Data Science for Engineers": "https://www.youtube.com/live/P26Ih1OBzyg?si=tP2eEHXINRh6UmL_",
+            "Introduction to Artificial Intelligence": "https://youtube.com/playlist?list=PLp6ek2hDcoNB_YJCruBFjhF79f5ZHyBuz&si=OmiToolZKDqk8rn2",
+            "Computer Networks": "https://youtube.com/playlist?list=PLbRMhDVUMngf-peFloB7kyiA40EptH1up&si=ZP77xCfN1eTSDfMd",
+            "Software Engineering": "https://youtube.com/playlist?list=PLbRMhDVUMngf8oZR3DpKMvYhZKga90JVt&si=Cvh81SlZGzKC_SCX",
+            "Cloud Computing": "https://youtube.com/playlist?list=PLShJJCRzJWxhz7SfG4hpaBD5bKOloWx9J&si=FBcrSiaUwOIzc96b",
+            "Introduction to Internet of Things": "https://youtube.com/playlist?list=PLJ5C_6qdAvBG7SHg5mLOQq6bzF-sOPu3k&si=fg0vVaqF-BNwG4Ok",
+            "Machine Learning for Engineering and Science Applications": "https://youtube.com/playlist?list=PLyqSpQzTE6M-SISTunGRBRiZk7opYBf_K&si=VJNu57a_uf7EWI1P",
+            "Discrete Mathematics": "https://youtube.com/playlist?list=PLyqSpQzTE6M-hUn1ILCzWE2gc592_DgK4&si=HpeIkJb1V35sjnSv",
+            "Deep Learning": "https://youtube.com/playlist?list=PLyqSpQzTE6M9gCgajvQbc68Hk_JKGBAYT&si=Cqd5z4lyHMAGD0Ky",
+            "Introduction to Data Analytics": "https://youtube.com/playlist?list=PLRueFtKLr0QN7MmQ8pdpQerOe_s8vGJG4&si=0XFNO4Dcg6oXo7zb",
+            "Compiler Design": "https://youtube.com/playlist?list=PLbRMhDVUMngcseCW7wXDvtTDemCuH80fP&si=W2DZlzf-z0GES2nF",
+            "Advanced Computer Architecture": "https://youtube.com/playlist?list=PLwdnzlV3ogoWJhBxBYu-K4l-q-nNHd24D&si=drsex4OP9Vyx5JBY",
+            "Introduction to Quantum Mechanics": "https://youtube.com/playlist?list=PL1955A15B7F282A7F&si=wWjuYG36JLNj7Vvi",
+            "Digital Signal Processing": "https://youtube.com/playlist?list=PL9567DFCA3A66F299&si=urdsPBZEqtEZBPP2",
+            "Computer Organization and Architecture": "https://youtube.com/playlist?list=PL-8LShlBMIjUuI9beQJHZUF14we25NToB&si=-50gQ87_a5uRnDzG",
+            "Advanced Data Structures": "https://youtube.com/playlist?list=PLBF3763AF2E1C572F&si=P7OoLZVRekyfkFy5",
+            "Artificial Neural Networks": "https://youtube.com/playlist?list=PL53BE265CE4A6C056&si=tQXRgYf6xnVPs67Y",
+            "Natural Language Processing": "https://youtube.com/playlist?list=PLzJaFd3A7DZutMK8fFxZx_mhmFQgzijGE&si=996eQp6lVl4Vs3LR",
+            "Computer Graphics": "https://youtube.com/playlist?list=PLwdnzlV3ogoWaYiowRtJ8t8FeR-ODfSV1&si=acjGYB3tVB8EHkuH",
+            "Computer Vision": "https://youtube.com/playlist?list=PLwdnzlV3ogoVsma5GmBSsgJM6gHv1QoAo&si=XkGGN18BuvSltPx3",
+            "Cloud Computing and Big Data": "https://youtube.com/playlist?list=PLShJJCRzJWxhz7SfG4hpaBD5bKOloWx9J&si=yUkUPwPhPN7oj1Az",
+            "Blockchain Technology": "https://youtube.com/playlist?list=PLFW6lRTa1g80R3Q_5-jsNVhDFAeGaABo9&si=75NeVCXF3gTe8vK-",
+            "Cyber Security": "https://youtube.com/playlist?list=PLyqSpQzTE6M-jkJEzbS5oHJUp2GWPsq6e&si=QM_TksKp4Y6H_HAD",
+            "Internet of Things": "https://youtube.com/playlist?list=PLE7VH8RC_N3bpVn-e8QzOAHziEgmjQ2qE&si=JY6CWqaPQ2KvRHel",
+            "Data Science": "https://youtu.be/MTjOuCbdBCo?si=kxtf8_c63Mr8bMWd",
+            "Machine Learning": "https://youtube.com/playlist?list=PLJ5C_6qdAvBGaabKHmVbtryZW9KpICiHC&si=U0pdAQ1Iw8RFOnhW",
+        };
+        const courseContainer = document.getElementById('course-list-container');
+        function populateCourses(filter = '') {
+            courseContainer.innerHTML = '';
+            Object.keys(courses).forEach(c => {
+                if (c.toLowerCase().includes(filter.toLowerCase())) {
+                    const a = document.createElement('a');
+                    a.href = courses[c]; a.className = "course-item"; a.target = "_blank"; a.textContent = c;
+                    courseContainer.appendChild(a);
+                }
+            });
+        }
+        document.getElementById('course-search-input').addEventListener('input', e => populateCourses(e.target.value));
+        populateCourses();
+
+        document.getElementById('stop-button').addEventListener('click', () => synth.cancel());
+        document.getElementById('logout-btn').addEventListener('click', () => window.location.href = 'login.html');
+    });
+</script>
+</body>
+</html>  

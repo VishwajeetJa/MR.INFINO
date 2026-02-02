@@ -11,7 +11,7 @@ from textblob import TextBlob
 
 
 MISTRAL_API_KEY = "Your API KEY"
-MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
+MISTRAL_API_URL = "YOUR URL"
 
 
 class VoiceManager:

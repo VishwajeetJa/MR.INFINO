@@ -10,7 +10,7 @@ from textblob import TextBlob
 
 
 
-MISTRAL_API_KEY = "Ozl4D71u7MFsdFiAIPEcLnkr5kdAVJ2h"
+MISTRAL_API_KEY = "Your API KEY"
 MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
 
 

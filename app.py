@@ -10,9 +10,9 @@ import wikipedia
 import random
 
 # Using your existing keys from the project
-MISTRAL_API_KEY = "Ozl4D71u7MFsdFiAIPEcLnkr5kdAVJ2h" 
-GEMINI_API_KEY = "AIzaSyC2dnad2khA7ElZGPkAHfcIlQBxc8GRPiM" 
-MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
+MISTRAL_API_KEY = "YOUR API KEY" 
+GEMINI_API_KEY = "YOUR API KEY" 
+MISTRAL_API_URL = "YOU API KEY URL"
 
 app = Flask(__name__)
 CORS(app)

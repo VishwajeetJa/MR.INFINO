@@ -3,7 +3,7 @@ from google.genai import types
 import pathlib
 import PyPDF2
 
-API_KEY = "AIzaSyC2dnad2khA7ElZGPkAHfcIlQBxc8GRPiM"
+API_KEY = "YOUR API KEY "
 
 def extract_text_from_pdf(pdf_path):
     with open(pdf_path, 'rb') as file:

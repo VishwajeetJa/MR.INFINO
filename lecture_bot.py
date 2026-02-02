@@ -11,7 +11,7 @@ import PyPDF2
 
 
 
-MISTRAL_API_KEY = "esexNZUdsokW1Yku6ePzkJ8hRIuPCcUh"
+MISTRAL_API_KEY = "YOUR API KEY"
 
 
 class VoiceManager:
